@@ -12,7 +12,6 @@ function LineColour([r1, g1, b1], [r2, g2, b2], strenght){
   return [(r1 * strenght + r2 * (1 - strenght)), (g1 * strenght + g2 * (1 - strenght)), (b1 * strenght + b2 * (1 - strenght))];
 }
 
-
 // take two vertices defining line and rasterize to framebuffer
 Rasterizer.prototype.drawLine = function(v1, v2) {
   const [x1, y1, c1] = v1;
@@ -150,11 +149,30 @@ Rasterizer.prototype.drawLine = function(v1, v2) {
   }
 }
 
+// Computes counter clockwise area
+function Triangle_Equation(x0, y0, x1, y1, xp, yp){
+  a = y1-y0;
+  b = x0-x1;
+  c = x0 * y1 - x1 * y0;
+  return a*xp + b*yp + c;
+}
+
 // take 3 vertices defining a solid triangle and rasterize to framebuffer
 Rasterizer.prototype.drawTriangle = function(v1, v2, v3) {
-  const [x1, y1, [r1, g1, b1]] = v1;
-  const [x2, y2, [r2, g2, b2]] = v2;
-  const [x3, y3, [r3, g3, b3]] = v3;
+  let [x1, y1, [r1, g1, b1]] = v1;
+  let [x2, y2, [r2, g2, b2]] = v2;
+  let [x3, y3, [r3, g3, b3]] = v3;
+
+  // make a swap if needed
+  if(Triangle_Equation(x1,y1,x2,y2,x3,y3) < 0){
+    [x2, y2, [r2, g2, b2]] = v3;
+    [x3, y3, [r3, g3, b3]] = v2;
+  }
+  
+  //draw the line between
+  drawLine(v1, v2);
+  drawLine(v2,v3);
+  drawLine(v3,v1);
   // TODO/HINT: use this.setPixel(x, y, color) in this function to draw triangle
   this.setPixel(Math.floor(x1), Math.floor(y1), [r1, g1, b1]);
   this.setPixel(Math.floor(x2), Math.floor(y2), [r2, g2, b2]);
