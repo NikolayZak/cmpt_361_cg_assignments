@@ -34,13 +34,13 @@ Rasterizer.prototype.drawLine = function(v1, v2) {
     distance = Math.abs(y_diff);
     xi = x1;
     if(y1 < y2){
-      for(let i = 0; i < Math.abs(y_diff) + 1; i++){ // y1 is the starting index
+      for(let i = 0; i < Math.abs(y_diff) + 1; i++){
         yi = y1 + i;
         strenght = 1 - (i / distance);
         this.setPixel(Math.floor(xi), Math.floor(yi), LineColour(c1, c2, strenght));
       }
     }else{
-      for(let i = 0; i < Math.abs(y_diff) + 1; i++){ // y1 is the starting index
+      for(let i = 0; i < Math.abs(y_diff) + 1; i++){
         yi = y1 - i;
         strenght = 1 - (i / distance);
         this.setPixel(Math.floor(xi), Math.floor(yi), LineColour(c1, c2, strenght));
@@ -53,13 +53,13 @@ Rasterizer.prototype.drawLine = function(v1, v2) {
     distance = Math.abs(x_diff);
     yi = y1;
     if(x1 < x2){
-      for(let i = 0; i < Math.abs(x_diff) + 1; i++){ // y1 is the starting index
+      for(let i = 0; i < Math.abs(x_diff) + 1; i++){
         xi = x1 + i;
         strenght = 1 - (i / distance);
         this.setPixel(Math.floor(xi), Math.floor(yi), LineColour(c1, c2, strenght));
       }
     }else{
-      for(let i = 0; i < Math.abs(x_diff) + 1; i++){ // y1 is the starting index
+      for(let i = 0; i < Math.abs(x_diff) + 1; i++){
         xi = x1 - i;
         strenght = 1 - (i / distance);
         this.setPixel(Math.floor(xi), Math.floor(yi), LineColour(c1, c2, strenght));
