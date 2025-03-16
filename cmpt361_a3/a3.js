@@ -9,7 +9,7 @@ import { Rasterizer } from './rasterizer.js';
 
 // returns the mix of colours (strenght = 1 is just c1)
 function LineColour([r1, g1, b1], [r2, g2, b2], strenght){
-  return [(r1 * strenght + r2 * (1 - strenght)), (g1 * strenght + g2 * (1 - strenght)), (b1 * strenght + b2 * (1 - strenght))]
+  return [(r1 * strenght + r2 * (1 - strenght)), (g1 * strenght + g2 * (1 - strenght)), (b1 * strenght + b2 * (1 - strenght))];
 }
 
 
@@ -41,9 +41,9 @@ Rasterizer.prototype.drawLine = function(v1, v2) {
       }
     }else{
       for(let i = 0; i < Math.abs(y_diff) + 1; i++){ // y1 is the starting index
-        yi = y2 + i;
+        yi = y1 - i;
         strenght = 1 - (i / distance);
-        this.setPixel(Math.floor(xi), Math.floor(yi), LineColour(c2, c1, strenght));
+        this.setPixel(Math.floor(xi), Math.floor(yi), LineColour(c1, c2, strenght));
       }
     }
     return;
@@ -60,9 +60,9 @@ Rasterizer.prototype.drawLine = function(v1, v2) {
       }
     }else{
       for(let i = 0; i < Math.abs(x_diff) + 1; i++){ // y1 is the starting index
-        xi = x2 + i;
+        xi = x1 - i;
         strenght = 1 - (i / distance);
-        this.setPixel(Math.floor(xi), Math.floor(yi), LineColour(c2, c1, strenght));
+        this.setPixel(Math.floor(xi), Math.floor(yi), LineColour(c1, c2, strenght));
       }
     }
     return;
@@ -70,6 +70,7 @@ Rasterizer.prototype.drawLine = function(v1, v2) {
 
   let slope = y_diff / x_diff;
 
+  // Case: Sloped Line
   if(slope > 0){// Case 2: Quadrant 1 or Quadrant 3
     if(x_diff > 0){ // Case 2-A: Quadrant 1
       if(slope > 1){ // Case 2-A-1: Quadrant 1, Steep Slope
@@ -93,18 +94,18 @@ Rasterizer.prototype.drawLine = function(v1, v2) {
       if(slope > 1){ // Case 2-B-1: Quadrant 3, Steep Slope
         distance = Math.abs(y_diff);
         for(let i = 0; i < Math.abs(y_diff) + 1; i++){
-          yi = y2 + i;
-          xi = x2 + (i / slope); // i * inverse slope
+          yi = y1 - i;
+          xi = x1 - (i / slope); // i * inverse slope
           strenght = 1 - (i / distance);
-          this.setPixel(Math.floor(xi), Math.floor(yi), LineColour(c2, c1, strenght));
+          this.setPixel(Math.floor(xi), Math.floor(yi), LineColour(c1, c2, strenght));
         }
       }else{// Case 2-B-2: Quadrant 3, Small Slope
         distance = Math.abs(x_diff);
         for(let i = 0; i < Math.abs(x_diff) + 1; i++){
-          xi = x2 + i;
-          yi = y2 + (i * slope); // i * slope
+          xi = x1 - i;
+          yi = y1 - (i * slope); // i * slope
           strenght = 1 - (i / distance);
-          this.setPixel(Math.floor(xi), Math.floor(yi), LineColour(c2, c1, strenght));
+          this.setPixel(Math.floor(xi), Math.floor(yi), LineColour(c1, c2, strenght));
         }
       }
     }
@@ -131,18 +132,18 @@ Rasterizer.prototype.drawLine = function(v1, v2) {
       if(slope < -1){ // Case 3-B-1: Quadrant 2, Steep Slope
         distance = Math.abs(y_diff);
         for(let i = 0; i < Math.abs(y_diff) + 1; i++){
-          yi = y2 - i;
-          xi = x2 - (i / slope); // i * inverse slope
+          yi = y1 + i;
+          xi = x1 + (i / slope); // i * inverse slope
           strenght = 1 - (i / distance);
-          this.setPixel(Math.floor(xi), Math.floor(yi), LineColour(c2, c1, strenght));
+          this.setPixel(Math.floor(xi), Math.floor(yi), LineColour(c1, c2, strenght));
         }
       }else{// Case 3-B-2: Quadrant 2, Small Slope
         distance = Math.abs(x_diff);
         for(let i = 0; i < Math.abs(x_diff) + 1; i++){
-          xi = x2 + i;
-          yi = y2 + (i * slope); // i * slope
+          xi = x1 - i;
+          yi = y1 - (i * slope); // i * slope
           strenght = 1 - (i / distance);
-          this.setPixel(Math.floor(xi), Math.floor(yi), LineColour(c2, c1, strenght));
+          this.setPixel(Math.floor(xi), Math.floor(yi), LineColour(c1, c2, strenght));
         }
       }
     }
