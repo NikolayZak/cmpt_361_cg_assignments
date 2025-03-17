@@ -167,6 +167,43 @@ Rasterizer.prototype.drawTriangle = function(v1, v2, v3) {
   let [x2, y2, c2] = v2;
   let [x3, y3, c3] = v3;
 
+  // Edge Case: Vertical line
+  let vertices;
+  if(x1 == x2 && x1 == x3){
+    vertices = [v1, v2, v3];
+    vertices.sort((a, b) => a[1] - b[1]);
+    this.drawLine(vertices[0], vertices[1]);
+    this.drawLine(vertices[1], vertices[2]);
+    return;
+  }
+
+  // Edge Case: Horizontal line
+  if(y1 == y2 && y1 == y3){
+    vertices = [v1, v2, v3];
+    vertices.sort((a, b) => a[0] - b[0]);
+    this.drawLine(vertices[0], vertices[1]);
+    this.drawLine(vertices[1], vertices[2]);
+    return;
+  }
+
+  // 2 points are the same
+  if((x1 == x2 && y1 == y2) || (x2 == x3 && y2 == y3) || (x1 == x3 && y1 == y3)){
+    vertices = [v1, v2, v3];
+    vertices.sort((a, b) => a[0] - b[0]);
+    
+    // 3 points are the same
+    if(vertices[0][0] == vertices[2][0] && vertices[0][1] == vertices[2][1]){
+      let rx = c1[0]/3 + c2[0]/3 + c3[0]/3;
+      let gx = c1[1]/3 + c2[1]/3 + c3[1]/3;
+      let bx = c1[2]/3 + c2[2]/3 + c3[2]/3;
+      this.setPixel(Math.floor(x1), Math.floor(y1), [rx,gx,bx]);
+      return;
+    }
+    this.drawLine(vertices[0], vertices[1]);
+    this.drawLine(vertices[1], vertices[2]);
+    return;
+  }
+
   // make a swap if needed to ensure counter clockwise order
   if(Triangle_Equation(x1,y1,x2,y2,x3,y3) < 0){
     [x2, y2, c2] = v3;
