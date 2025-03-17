@@ -150,33 +150,87 @@ Rasterizer.prototype.drawLine = function(v1, v2) {
 }
 
 // Computes counter clockwise area
-function Triangle_Equation(x0, y0, x1, y1, xp, yp){
-  a = y1-y0;
-  b = x0-x1;
-  c = x0 * y1 - x1 * y0;
-  return a*xp + b*yp + c;
+function Triangle_Equation(x0, y0, x1, y1, xp, yp) {
+  return (y1 - y0) * (xp - x0) - (x1 - x0) * (yp - y0);
+}
+
+function UVC_Colour(u, v, w, [r1, g1, b1], [r2, g2, b2], [r3, g3, b3]){
+  let rp = u * r1 + v * r2 + w * r3;
+  let gp = u * g1 + v * g2 + w * g3;
+  let bp = u * b1 + v * b2 + w * b3;
+  return [rp, gp, bp];
 }
 
 // take 3 vertices defining a solid triangle and rasterize to framebuffer
 Rasterizer.prototype.drawTriangle = function(v1, v2, v3) {
-  let [x1, y1, [r1, g1, b1]] = v1;
-  let [x2, y2, [r2, g2, b2]] = v2;
-  let [x3, y3, [r3, g3, b3]] = v3;
+  let [x1, y1, c1] = v1;
+  let [x2, y2, c2] = v2;
+  let [x3, y3, c3] = v3;
 
-  // make a swap if needed
+  // make a swap if needed to ensure counter clockwise order
   if(Triangle_Equation(x1,y1,x2,y2,x3,y3) < 0){
-    [x2, y2, [r2, g2, b2]] = v3;
-    [x3, y3, [r3, g3, b3]] = v2;
+    [x2, y2, c2] = v3;
+    [x3, y3, c3] = v2;
   }
+
+  // search box
+  let x_min = Math.min(x1, x2, x3);
+  let y_min = Math.min(y1, y2, y3);
+  let x_max = Math.max(x1, x2, x3);
+  let y_max = Math.max(y1, y2, y3);
+
+  // variables
+  let A = Triangle_Equation(x1,y1,x2,y2,x3,y3);
+  let a1;
+  let a2;
+  let a3;
+  let u;
+  let v;
+  let w;
   
-  //draw the line between
-  drawLine(v1, v2);
-  drawLine(v2,v3);
-  drawLine(v3,v1);
-  // TODO/HINT: use this.setPixel(x, y, color) in this function to draw triangle
-  this.setPixel(Math.floor(x1), Math.floor(y1), [r1, g1, b1]);
-  this.setPixel(Math.floor(x2), Math.floor(y2), [r2, g2, b2]);
-  this.setPixel(Math.floor(x3), Math.floor(y3), [r3, g3, b3]);
+  for(let i = x_min; i <= x_max; i++){
+    for(let j = y_min; j <= y_max; j++){
+      // first side
+      a1 = Triangle_Equation(x2, y2, x3, y3, i, j);
+      if(a1 < 0){ // Case: (i,j) not in triangle
+        continue;
+      }
+      // second side
+      a2 = Triangle_Equation(x3, y3, x1, y1, i, j);
+      if(a2 < 0){ // Case: (i,j) not in triangle
+        continue;
+      }
+      // third side
+      a3 = Triangle_Equation(x1, y1, x2, y2, i, j);
+      if(a3 < 0){ // Case: (i,j) not in triangle
+        continue;
+      }
+      // Point (i, j) is inside the triangle
+
+      // edge cases
+      if(a1 == 0){
+        if(y2 < y3 || (y2 == y3 && x2 > x3)){
+          continue;
+        }
+      }
+      if(a2 == 0){
+        if(y3 < y1 || (y3 == y1 && x3 > x1)){
+          continue;
+        }
+      }
+      if(a3 == 0){
+        if(y1 < y2 || (y1 == y2 && x1 > x2)){
+          continue;
+        }
+      }
+
+      // Colour the pixel
+      u = a1 / A;
+      v = a2 / A;
+      w = a3 / A;
+      this.setPixel(Math.floor(i), Math.floor(j), UVC_Colour(u, v, w, c1, c2, c3));
+    }
+  }
 }
 
 
