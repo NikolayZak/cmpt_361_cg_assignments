@@ -31,13 +31,33 @@ TriangleMesh.prototype.createSphere = function(numStacks, numSectors) {
   this.indices = [0, 1, 2];
 }
 
-// input must be in this order [Translation, Rotation, Scale]
 Scene.prototype.computeTransformation = function(transformSequence) {
   // TODO: go through transform sequence and compose into overallTransform
   let overallTransform = Mat4.create();  // identity matrix
-  for(transform of transformSequence){
-    Mat4.multiply(overallTransform, transform, overallTransform);
+  let T = [];
+  let R = [];
+  let S = [];
+  // sort the transformations into their 3 types
+  for(let transform of transformSequence){
+    switch (transform[0]) {
+      case "T":
+        T.push(transform);
+        break;
+
+      case "Rx":
+      case "Ry":
+      case "Rz":
+        R.push(transform);
+        break;
+
+      case "S":
+        S.push(transform);
+      default:
+        break;
+    }
   }
+
+  // Compute the transformations:
   return overallTransform;
 }
 
