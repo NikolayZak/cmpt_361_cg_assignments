@@ -1,4 +1,4 @@
-import { Mat4 } from './math.js';
+import { Mat4, Vec4 } from './math.js';
 import { Parser } from './parser.js';
 import { Scene } from './scene.js';
 import { Renderer } from './renderer.js';
@@ -37,8 +37,10 @@ Scene.prototype.computeTransformation = function(transformSequence) {
   let T = [];
   let R = [];
   let S = [];
+
   // sort the transformations into their 3 types
   for(let transform of transformSequence){
+    console.log(transform);
     switch (transform[0]) {
       case "T":
         T.push(transform);
@@ -57,7 +59,29 @@ Scene.prototype.computeTransformation = function(transformSequence) {
     }
   }
 
-  // Compute the transformations:
+  // Apply Translations in order
+  for(let translation of T){
+    const tx = translation[1];
+    const ty = translation[2];
+    const tz = translation[3];
+    let current = Mat4.create();
+    Mat4.set(current,1,0,0,tx,
+                     0,1,0,ty,
+                     0,0,1,tz,
+                     0,0,0,1);
+    Mat4.multiply(overallTransform, current, overallTransform);
+  }
+
+  // Apply Rotations
+  for(let rotation of R){
+    
+  }
+
+  // Apply Scaling
+  for(let scale of S){
+    
+  }
+  console.log(overallTransform);
   return overallTransform;
 }
 
