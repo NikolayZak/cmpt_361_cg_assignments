@@ -16,11 +16,116 @@ const quad = {
   uvCoords: [0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1]
 }
 
+const cube = {
+  positions: [
+    // Front face (z = +0.5)
+    -1, -1,  1,
+     1, -1,  1,
+     1,  1,  1,
+    -1, -1,  1,
+     1,  1,  1,
+    -1,  1,  1,
+
+    // Back face (z = -0.5)
+    -1, -1, -1,
+    -1,  1, -1,
+     1,  1, -1,
+    -1, -1, -1,
+     1,  1, -1,
+     1, -1, -1,
+
+    // Left face (x = -1)
+    -1, -1, -1,
+    -1, -1,  1,
+    -1,  1,  1,
+    -1, -1, -1,
+    -1,  1,  1,
+    -1,  1, -1,
+
+    // Right face (x = +1)
+     1, -1, -1,
+     1,  1, -1,
+     1,  1,  1,
+     1, -1, -1,
+     1,  1,  1,
+     1, -1,  1,
+
+    // Top face (y = +1)
+    -1,  1, -1,
+    -1,  1,  1,
+     1,  1,  1,
+    -1,  1, -1,
+     1,  1,  1,
+     1,  1, -1,
+
+    // Bottom face (y = -1)
+    -1, -1, -1,
+     1, -1, -1,
+     1, -1,  1,
+    -1, -1, -1,
+     1, -1,  1,
+    -1, -1,  1
+  ],
+
+  normals: [
+    // Front
+    0, 0, 1,  0, 0, 1,  0, 0, 1,
+    0, 0, 1,  0, 0, 1,  0, 0, 1,
+
+    // Back
+    0, 0, -1,  0, 0, -1,  0, 0, -1,
+    0, 0, -1,  0, 0, -1,  0, 0, -1,
+
+    // Left
+    -1, 0, 0,  -1, 0, 0,  -1, 0, 0,
+    -1, 0, 0,  -1, 0, 0,  -1, 0, 0,
+
+    // Right
+    1, 0, 0,  1, 0, 0,  1, 0, 0,
+    1, 0, 0,  1, 0, 0,  1, 0, 0,
+
+    // Top
+    0, 1, 0,  0, 1, 0,  0, 1, 0,
+    0, 1, 0,  0, 1, 0,  0, 1, 0,
+
+    // Bottom
+    0, -1, 0,  0, -1, 0,  0, -1, 0,
+    0, -1, 0,  0, -1, 0,  0, -1, 0
+  ],
+
+  uvCoords: [
+    // Front
+    0, 0,  1, 0,  1, 1,
+    0, 0,  1, 1,  0, 1,
+
+    // Back
+    0, 0,  1, 1,  1, 0,
+    0, 0,  0, 1,  1, 1,
+
+    // Left
+    0, 0,  1, 0,  1, 1,
+    0, 0,  1, 1,  0, 1,
+
+    // Right
+    0, 0,  1, 1,  1, 0,
+    0, 0,  0, 1,  1, 1,
+
+    // Top
+    0, 0,  1, 0,  1, 1,
+    0, 0,  1, 1,  0, 1,
+
+    // Bottom
+    0, 0,  1, 1,  1, 0,
+    0, 0,  0, 1,  1, 1
+  ]
+}
+
+
 TriangleMesh.prototype.createCube = function() {
   // TODO: populate unit cube vertex positions, normals, and uv coordinates
-  this.positions = quad.positions;
-  this.normals = quad.normals;
-  this.uvCoords = quad.uvCoords;
+  this.positions = cube.positions;
+  this.normals = cube.normals;
+  this.uvCoords = cube.uvCoords;
 }
 
 TriangleMesh.prototype.createSphere = function(numStacks, numSectors) {
@@ -34,13 +139,14 @@ TriangleMesh.prototype.createSphere = function(numStacks, numSectors) {
 Scene.prototype.computeTransformation = function(transformSequence) {
   // TODO: go through transform sequence and compose into overallTransform
   let overallTransform = Mat4.create();  // identity matrix
+  
+  
   let T = [];
   let R = [];
   let S = [];
 
   // sort the transformations into their 3 types
   for(let transform of transformSequence){
-    console.log(transform);
     switch (transform[0]) {
       case "T":
         T.push(transform);
@@ -54,17 +160,18 @@ Scene.prototype.computeTransformation = function(transformSequence) {
 
       case "S":
         S.push(transform);
+        break;
       default:
         break;
     }
   }
 
+  let current = Mat4.create();
   // Apply Translations in order
   for(let translation of T){
     const tx = translation[1];
     const ty = translation[2];
     const tz = translation[3];
-    let current = Mat4.create();
     Mat4.set(current,1,0,0,tx,
                      0,1,0,ty,
                      0,0,1,tz,
@@ -74,12 +181,43 @@ Scene.prototype.computeTransformation = function(transformSequence) {
 
   // Apply Rotations
   for(let rotation of R){
-    
+    const cs = Math.cos(rotation[1] * Math.PI / 180);
+    const s = Math.sin(rotation[1] * Math.PI / 180);
+    switch (rotation[0]) {
+      case "Rx":
+        Mat4.set(current,1,0,0,0,
+                         0,cs,s,0,
+                         0,-s,cs,0,
+                         0,0,0,1);
+        break;
+      case "Ry":
+        Mat4.set(current,cs,0,s,0,
+                         0,1,0,0,
+                         -s,0,cs,0,
+                         0,0,0,1);
+        break;
+      case "Rz":
+        Mat4.set(current,cs,-s,0,0,
+                         s,cs,0,0,
+                         0,0,1,0,
+                         0,0,0,1);
+        break;
+      default:
+        break;
+    }
+    Mat4.multiply(overallTransform, current, overallTransform);
   }
 
   // Apply Scaling
   for(let scale of S){
-    
+    const sx = scale[1];
+    const sy = scale[2];
+    const sz = scale[3];
+    Mat4.set(current,sx,0,0,0,
+                     0,sy,0,0,
+                     0,0,sz,0,
+                     0,0,0,1);
+    Mat4.multiply(overallTransform, current, overallTransform);
   }
   console.log(overallTransform);
   return overallTransform;
