@@ -1,4 +1,4 @@
-import { Mat4, Vec4 } from './math.js';
+import { Mat4 } from './math.js';
 import { Parser } from './parser.js';
 import { Scene } from './scene.js';
 import { Renderer } from './renderer.js';
@@ -16,93 +16,127 @@ const quad = {
   uvCoords: [0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1]
 }
 
-const cube = {
-  positions: [
-    // front face
-    -1, -1,  1,  1, -1,  1,  1,  1,  1,
-    -1, -1,  1,  1,  1,  1, -1,  1,  1,
-
-    // back face
-     1, -1, -1, -1, -1, -1, -1,  1, -1,
-     1, -1, -1, -1,  1, -1,  1,  1, -1,
-
-    // right face
-     1, -1,  1,  1, -1, -1,  1,  1, -1,
-     1, -1,  1,  1,  1, -1,  1,  1,  1,
-    
-     // left face
-    -1, -1, -1, -1, -1,  1, -1,  1,  1,
-    -1, -1, -1, -1,  1,  1, -1,  1, -1,
-
-    // top face
-    -1,  1,  1,  1,  1,  1,  1,  1, -1,
-    -1,  1,  1,  1,  1, -1, -1,  1, -1,
-
-    // bottom face
-    -1, -1, -1,  1, -1, -1,  1, -1,  1,
-    -1, -1, -1,  1, -1,  1, -1, -1,  1,
-  ],
-
-  normals: [
-    // front
-    0, 0, 1,  0, 0, 1,  0, 0, 1,
-    0, 0, 1,  0, 0, 1,  0, 0, 1,
-
-    // back
-    0, 0, -1,  0, 0, -1,  0, 0, -1,
-    0, 0, -1,  0, 0, -1,  0, 0, -1,
-
-    // right
-    1, 0, 0,  1, 0, 0,  1, 0, 0,
-    1, 0, 0,  1, 0, 0,  1, 0, 0,
-
-    // left
-    -1, 0, 0,  -1, 0, 0,  -1, 0, 0,
-    -1, 0, 0,  -1, 0, 0,  -1, 0, 0,
-
-    // top
-    0, 1, 0,  0, 1, 0,  0, 1, 0,
-    0, 1, 0,  0, 1, 0,  0, 1, 0,
-
-    // bottom
-    0, -1, 0,  0, -1, 0,  0, -1, 0,
-    0, -1, 0,  0, -1, 0,  0, -1, 0,
-  ],
-
-  uvCoords: [
-    // front
-    0, 0, 1, 0, 1, 1,
-    0, 0, 1, 1, 0, 1,
-
-    // back
-    0, 0, 1, 0, 1, 1,
-    0, 0, 1, 1, 0, 1,
-
-    // right
-    0, 0, 1, 0, 1, 1,
-    0, 0, 1, 1, 0, 1,
-
-    // left
-    0, 0, 1, 0, 1, 1,
-    0, 0, 1, 1, 0, 1,
-
-    // top
-    0, 0, 1, 0, 1, 1,
-    0, 0, 1, 1, 0, 1,
-
-    // bottom
-    0, 0, 1, 0, 1, 1,
-    0, 0, 1, 1, 0, 1,
-  ]
-};
-
 
 TriangleMesh.prototype.createCube = function() {
-  // TODO: populate unit cube vertex positions, normals, and uv coordinates
-  this.positions = cube.positions;
-  this.normals = cube.normals;
-  this.uvCoords = cube.uvCoords;
+  this.positions = [
+    // front
+    -1, -1,  1,
+     1, -1,  1,
+     1,  1,  1,
+    -1,  1,  1,
+
+    // back
+    -1, -1, -1,
+    -1,  1, -1,
+     1,  1, -1,
+     1, -1, -1,
+
+    // left
+    -1, -1, -1,
+    -1, -1,  1,
+    -1,  1,  1,
+    -1,  1, -1,
+
+    // right
+    1, -1, -1,
+    1,  1, -1,
+    1,  1,  1,
+    1, -1,  1,
+
+    // top
+    -1,  1, -1,
+    -1,  1,  1,
+     1,  1,  1,
+     1,  1, -1,
+
+    // bottom
+    -1, -1, -1,
+     1, -1, -1,
+     1, -1,  1,
+    -1, -1,  1
+  ];
+
+  this.indices = [
+    0, 1, 2,  0, 2, 3, // front
+    4, 5, 6,  4, 6, 7, // back
+    8, 9,10,  8,10,11, // left
+   12,13,14, 12,14,15, // right
+   16,17,18, 16,18,19, // top
+   20,21,22, 20,22,23  // bottom
+  ];
+
+  this.normals = [
+    // front
+    0,  0,  1,
+    0,  0,  1,
+    0,  0,  1,
+    0,  0,  1,
+
+   // back
+    0,  0, -1,
+    0,  0, -1,
+    0,  0, -1,
+    0,  0, -1,
+
+    // left
+    -1,  0,  0,
+    -1,  0,  0,
+    -1,  0,  0,
+    -1,  0,  0,
+
+    // right
+    1,  0,  0,
+    1,  0,  0,
+    1,  0,  0,
+    1,  0,  0,
+
+    // top
+     0,  1,  0,
+     0,  1,  0,
+     0,  1,  0,
+     0,  1,  0,
+
+    // bottom
+     0, -1,  0,
+     0, -1,  0,
+     0, -1,  0,
+     0, -1,  0
+  ];
+
+  this.uvCoords = [
+    // same uvCoords for all sides
+    0, 0,
+    1, 0,
+    1, 1,
+    0, 1,
+
+    0, 0,
+    1, 0,
+    1, 1,
+    0, 1,
+
+    0, 0,
+    1, 0,
+    1, 1,
+    0, 1,
+
+    0, 0,
+    1, 0,
+    1, 1,
+    0, 1,
+
+    0, 0,
+    1, 0,
+    1, 1,
+    0, 1,
+
+    0, 0,
+    1, 0,
+    1, 1,
+    0, 1
+  ];
 }
+
 
 TriangleMesh.prototype.createSphere = function(numStacks, numSectors) {
   // TODO: populate unit sphere vertex positions, normals, uv coordinates, and indices
@@ -115,87 +149,55 @@ TriangleMesh.prototype.createSphere = function(numStacks, numSectors) {
 Scene.prototype.computeTransformation = function(transformSequence) {
   // TODO: go through transform sequence and compose into overallTransform
   let overallTransform = Mat4.create();  // identity matrix
+  let current = Mat4.create();
   
-  
-  let T = [];
-  let R = [];
-  let S = [];
-
-  // sort the transformations into their 3 types
   for(let transform of transformSequence){
+    let t1 = transform[1];
+    let t2 = transform[2];
+    let t3 = transform[3];
+    let s = Math.sin(t1 * Math.PI / 180);
+    let c = Math.cos(t1 * Math.PI / 180);
     switch (transform[0]) {
       case "T":
-        T.push(transform);
+        Mat4.set(current,1,0,0,0,
+                         0,1,0,0,
+                         0,0,1,0,
+                        t1,t2,t3,1);
         break;
 
       case "Rx":
+        Mat4.set(current,1,0,0,0,
+                         0,c,-s,0,
+                         0,s,c,0,
+                        0,0,0,1);
+        break;
+
       case "Ry":
+        Mat4.set(current,c,0,s,0,
+                         0,1,0,0,
+                         -s,0,c,0,
+                         0,0,0,1);
+        break;
+
       case "Rz":
-        R.push(transform);
+        Mat4.set(current,c,s,0,0,
+                         -s,c,0,0,
+                          0,0,1,0,
+                         0,0,0,1);
         break;
 
       case "S":
-        S.push(transform);
+        Mat4.set(current,t1,0,0,0,
+                         0,t2,0,0,
+                         0,0,t3,0,
+                         0,0,0,1);
         break;
-      default:
-        break;
-    }
-  }
 
-  let current = Mat4.create();
-  // Apply Translations in order
-  for(let translation of T){
-    const tx = translation[1];
-    const ty = translation[2];
-    const tz = translation[3];
-    Mat4.set(current,1,0,0,tx,
-                     0,1,0,ty,
-                     0,0,1,tz,
-                     0,0,0,1);
-    Mat4.multiply(overallTransform, current, overallTransform);
-  }
-
-  // Apply Rotations
-  for(let rotation of R){
-    const cs = Math.cos(rotation[1] * Math.PI / 180);
-    const s = Math.sin(rotation[1] * Math.PI / 180);
-    switch (rotation[0]) {
-      case "Rx":
-        Mat4.set(current,1,0,0,0,
-                         0,cs,s,0,
-                         0,-s,cs,0,
-                         0,0,0,1);
-        break;
-      case "Ry":
-        Mat4.set(current,cs,0,s,0,
-                         0,1,0,0,
-                         -s,0,cs,0,
-                         0,0,0,1);
-        break;
-      case "Rz":
-        Mat4.set(current,cs,-s,0,0,
-                         s,cs,0,0,
-                         0,0,1,0,
-                         0,0,0,1);
-        break;
       default:
         break;
     }
     Mat4.multiply(overallTransform, current, overallTransform);
   }
-
-  // Apply Scaling
-  for(let scale of S){
-    const sx = scale[1];
-    const sy = scale[2];
-    const sz = scale[3];
-    Mat4.set(current,sx,0,0,0,
-                     0,sy,0,0,
-                     0,0,sz,0,
-                     0,0,0,1);
-    Mat4.multiply(overallTransform, current, overallTransform);
-  }
-  console.log(overallTransform);
   return overallTransform;
 }
 
