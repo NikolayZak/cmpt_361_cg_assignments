@@ -139,11 +139,38 @@ TriangleMesh.prototype.createCube = function() {
 
 
 TriangleMesh.prototype.createSphere = function(numStacks, numSectors) {
-  // TODO: populate unit sphere vertex positions, normals, uv coordinates, and indices
-  this.positions = quad.positions.slice(0, 9).map(p => p * 0.5);
-  this.normals = quad.normals.slice(0, 9);
-  this.uvCoords = quad.uvCoords.slice(0, 6);
-  this.indices = [0, 1, 2];
+  this.positions = [];
+  this.normals = [];
+  this.uvCoords = [];
+  this.indices = [];
+
+  for(let i = 0; i <= numStacks; i++){ // for each stack
+    let y_angle = Math.PI * (i / numStacks); // vertical from 0 to PI
+    let r = Math.sin(y_angle);
+    let y = Math.cos(y_angle);
+
+    for(let j = 0; j <= numSectors; j++){ // horizontally from 0 to 2PI
+      let x_angle = 2 * Math.PI * (j / numSectors);
+      let x = r * Math.cos(x_angle);
+      let z = r * Math.sin(x_angle);
+      // add vertex
+      this.positions.push(x, y, z);
+      // add normal
+      this.normals.push(x, y, z);
+      // add uv projection
+      this.uvCoords.push(j / numSectors, 1 - i / numStacks);
+
+      // first index
+      const first = i * (numSectors + 1) + j;
+      // second index
+      const second = first + numSectors + 1;
+
+      // first triangle of the section
+      this.indices.push(first, second, first + 1);
+      // second triangle of the section
+      this.indices.push(second, second + 1, first + 1);
+    }
+  }
 }
 
 Scene.prototype.computeTransformation = function(transformSequence) {
