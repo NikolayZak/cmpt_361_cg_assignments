@@ -104,36 +104,41 @@ TriangleMesh.prototype.createCube = function() {
   ];
 
   this.uvCoords = [
-    // same uvCoords for all sides
+    // front (4)
+    0.5, 2/3,
+    1.0, 2/3,
+    1.0, 1.0,
+    0.5, 1.0,
+  
+    // back
     0, 0,
-    1, 0,
-    1, 1,
-    0, 1,
-
     0, 0,
-    1, 0,
-    1, 1,
-    0, 1,
-
     0, 0,
-    1, 0,
-    1, 1,
-    0, 1,
-
     0, 0,
-    1, 0,
-    1, 1,
-    0, 1,
-
-    0, 0,
-    1, 0,
-    1, 1,
-    0, 1,
-
-    0, 0,
-    1, 0,
-    1, 1,
-    0, 1
+  
+    // left
+    0.0, 0.0,
+    0.5, 0.0,
+    0.5, 1/3,
+    0.0, 1/3,
+  
+    // right
+    0.5, 0.0,
+    1.0, 0.0,
+    1.0, 1/3,
+    0.5, 1/3,
+  
+    // top
+    0.0, 1/3,
+    0.5, 1/3,
+    0.5, 2/3,
+    0.0, 2/3,
+  
+    // bottom
+    0.5, 1/3,
+    1.0, 1/3,
+    1.0, 2/3,
+    0.5, 2/3
   ];
 }
 
@@ -207,8 +212,8 @@ Scene.prototype.computeTransformation = function(transformSequence) {
         break;
 
       case "Rz":
-        Mat4.set(current,c,s,0,0,
-                         -s,c,0,0,
+        Mat4.set(current,c,-s,0,0,
+                         s,c,0,0,
                           0,0,1,0,
                          0,0,0,1);
         break;
