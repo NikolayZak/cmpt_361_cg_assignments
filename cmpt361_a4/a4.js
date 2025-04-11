@@ -111,10 +111,10 @@ TriangleMesh.prototype.createCube = function() {
     0.5, 1.0,
   
     // back
-    0, 0,
-    0, 0,
-    0, 0,
-    0, 0,
+    0.0, 2/3,
+    0.5, 2/3,
+    0.5, 1.0,
+    0.0, 1.0,
   
     // left
     0.0, 0.0,
