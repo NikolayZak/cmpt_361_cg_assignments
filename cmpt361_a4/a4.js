@@ -280,7 +280,12 @@ void main() {
   
   vec3 diffuse = ka + kd * lightIntensity * max(0.0, dot(N, S));
   vec3 spec = ks * pow(max(0.0, dot(N,H)), shininess);
-  gl_FragColor = vec4((diffuse + spec), 1.0);
+
+  vec3 textureCol = vec3(1.0);
+  if(hasTexture){
+    textureCol = texture2D(uTexture, vTexCoord).rgb * lightIntensity;
+  }
+  gl_FragColor = vec4((diffuse + spec) * textureCol, 1.0);
 }
 `;
 
