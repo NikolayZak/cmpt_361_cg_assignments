@@ -268,10 +268,19 @@ varying vec2 vTexCoord;
 
 // TODO: implement fragment shader logic below
 
-varying vec3 temp;
+varying vec3 fPosition;
+varying vec3 fNormal;
+varying vec3 light_dir;
 
 void main() {
-  gl_FragColor = vec4(0,0,0,1.0);
+  vec3 S = normalize(light_dir);
+  vec3 V = normalize(-fPosition);
+  vec3 N = normalize(fNormal);
+  vec3 H = normalize(V+S);
+  
+  vec3 diffuse = ka + kd * lightIntensity * max(0.0, dot(N, S));
+  vec3 spec = ks * pow(max(0.0, dot(N,H)), shininess);
+  gl_FragColor = vec4((diffuse + spec), 1.0);
 }
 `;
 
