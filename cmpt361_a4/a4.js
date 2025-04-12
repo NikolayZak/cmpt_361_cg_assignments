@@ -244,12 +244,17 @@ varying vec2 vTexCoord;
 
 // TODO: implement vertex shader logic below
 
-varying vec3 temp;
+varying vec3 fPosition;
+varying vec3 fNormal;
+varying vec3 light_dir;
 
 void main() {
-  temp = vec3(position.x, normal.x, uvCoord.x);
+  vec4 pos = modelMatrix * vec4(position, 1.0);
+  fNormal = normalize(normalMatrix * normal);
+  fPosition = pos.xyz;
+  light_dir = normalize(lightPosition - fPosition);
   vTexCoord = uvCoord;
-  gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
+  gl_Position = projectionMatrix * viewMatrix * pos;
 }
 `;
 
@@ -266,7 +271,7 @@ varying vec2 vTexCoord;
 varying vec3 temp;
 
 void main() {
-  gl_FragColor = vec4(temp, 1.0);
+  gl_FragColor = vec4(0,0,0,1.0);
 }
 `;
 
